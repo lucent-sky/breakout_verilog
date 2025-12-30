@@ -42,18 +42,15 @@ int main(int argc, char **argv) {
     Verilated::commandArgs(argc, argv);
     Vbreakout* top = new Vbreakout;
 
-    // Reset
     top->reset = 1;
     top->clk = 0; top->eval();
     top->clk = 1; top->eval();
     top->reset = 0;
 
     while (!Verilated::gotFinish()) {
-        // Default inputs
         top->left  = 0;
         top->right = 0;
 
-        // ---- Keyboard input ----
         if (kbhit()) {
             char c = getch();
             if (c == 'a') top->left  = 1;
@@ -61,14 +58,11 @@ int main(int argc, char **argv) {
             if (c == 'q') break;
         }
 
-        // Clock tick
         top->clk = 0; top->eval();
         top->clk = 1; top->eval();
 
-        // Clear screen
         std::cout << "\033[2J\033[H";
 
-        // Render 40x20 board
         for (int y = 0; y < 20; y++) {
             for (int x = 0; x < 40; x++) {
                 if (x == top->ball_x && y == top->ball_y)

@@ -8,7 +8,7 @@ module breakout (
     output reg  [5:0] paddle_x
 );
 
-    // Signed horizontal velocity: -2 .. +2
+    // signed velocity
     reg signed [2:0] vx;
     reg dy;  // 0 = up, 1 = down
 
@@ -20,30 +20,26 @@ module breakout (
             vx       <= 1;
             dy       <= 1;
         end else begin
-            // ---- Ball movement ----
-            ball_x <= ball_x + {{3{vx[2]}}, vx};
+            ball_x <= ball_x + {{3{vx[2]}}, vx}; //ball movement
             if (dy) ball_y <= ball_y + 1;
             else    ball_y <= ball_y - 1;
 
-            // ---- Wall collisions ----
-            if (ball_x <= 1)  vx <=  2;
+            if (ball_x <= 1)  vx <=  2; //collision
             if (ball_x >= 38) vx <= -2;
             if (ball_y == 0)  dy <= 1;
 
-            // ---- Paddle movement ----
-            if (left && paddle_x > 0)
+            if (left && paddle_x > 0) //paddle movement
                 paddle_x <= paddle_x - 1;
             else if (right && paddle_x < 34)
                 paddle_x <= paddle_x + 1;
 
-            // ---- Paddle collision with angle control ----
-            if (ball_y == 19 &&
+            if (ball_y == 19 && //paddle collision
                 ball_x >= paddle_x &&
                 ball_x <  paddle_x + 6) begin
 
-                dy <= 0; // bounce upward
+                dy <= 0;
 
-                case (ball_x - paddle_x)
+                case (ball_x - paddle_x) //angle control
                     0: vx <= -2;
                     1: vx <= -1;
                     2: vx <=  0;
